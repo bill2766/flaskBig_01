@@ -5,11 +5,14 @@
     <title>前景识别</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-    <link rel="stylesheet" href="../static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="../static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/style.css">
 	<script src="../static/jquery/jquery-3.3.1.js"></script>
-	<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-
+	<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.3.7-dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='jquery/jquery-3.3.1.js') }}"></script>
+    <script src="{{url_for('static', filename='bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
 </head>
 <body>
 {% for message in get_flashed_messages() %}
@@ -18,16 +21,16 @@
     </div>
 {% endfor %}
 
-    <div class="container">
+    <div class="container" style="width: 80%">
         <div class="row" name="nav">
-            <div class = "col-md-12" style="background-color:white;padding-right:0;padding-left:0">
-                <nav class="navbar navbar-default" style="margin-bottom:2px;margin-top:10px" role="navigation">
+            <div class = "col-md-12" style="background-color:white;">
+                <nav class="navbar navbar-default" style="margin-bottom:5px;margin-top:10px" role="navigation">
                     <div class="navbar-header">
                         <a class="navbar-brand" href="#">首页</a>
                     </div>
                     <div>
                         <ul class="nav navbar-nav">
-                            <li class="active">
+                            <li>
                                 <a href="#">更多</a>
                             </li>
                         </ul>
@@ -37,36 +40,50 @@
         </div>
 
         <div class="row" name="main">
-            <div class = "col-md-2" style="background-color:grey;height: 300px">
-                <!--
-                <div style="margin: 20px 40px">
-                    <label type="button" class="btn_img">
-                        <span>选择图片</span>
-                        <input type="file">
-                    </label>
-                    <button type="button" class="btn_img">检测</button>
-                </div>-->
+            <div class = "col-md-2" style="background-color:white;height: 300px">
 
-                <div style="margin: 20px 40px">
-                    <form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data">
-                        <label type="button" class="btn_img">
-                            <span>选择图片</span>
-                            <input type="file" name="photo">
-                        </label>
-                        <input type="submit" value="提交图片" class="btn_img" style="margin-top:15px;"/>
-                    </form>
-
-                    <button type="button" class="btn_img">检测</button>
+                <nav class="navbar navbar-default" id="sidebar-wrapper" role="navigation">
+                  <ul class="nav sidebar-nav">
+                    <li class="sidebar-brand">
+                    <li>
+                      <a href="#"><span class="glyphicon glyphicon-upload"></span>识别图片</a>
+                    </li>
+                    <li><a href="#"><span class="glyphicon glyphicon-repeat"></span>历史记录 </a></li>
+                  </ul>
+                </nav>
+            </div>
+            <div class = "col-md-7" style="background-color:white;">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        识别图片
+                    </div>
+                    <div class="panel-body" style="height: 500px;">
+                        <div name="imgButtons" style="text-align:center;">
+                            <form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data">
+                                <label type="button" class="btn_img">
+                                    <span>选择图片</span>
+                                    <input type="file" name="photo">
+                                </label>
+                                <input type="submit" value="提交图片" class="btn_img"/>
+                            </form>
+                            <button type="button" class="btn_img">检测</button>
+                        </div>
+                        <div style="float:left;clear:both;">
+                            {% block img %}
+                            {% endblock %}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class = "col-md-7" style="background-color:beige;height: 500px;text-align:center;object-fit: contain;">
-                 {% block img %}
-                 {% endblock %}
-            </div>
-            <div class = "col-md-3" style="background-color:#c4e3f3;height: 300px">
-                {<br>
-                    "predict label":"sugar man"<br>
-                }
+            <div class = "col-md-3" style="background-color:white;height: 300px">
+                <div class="panel panel-default">
+                    <div class="panel-heading">物体</div>
+                    <table class="table">
+                        <th>物体</th><th>数量 </th>
+                        <tr><td>道路</td><td>1</td></tr>
+                        <tr><td>行人</td><td>2</td></tr>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="row" name="footer">
