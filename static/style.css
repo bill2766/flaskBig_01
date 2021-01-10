@@ -1,0 +1,28 @@
+.btn_img{
+    position: relative;
+    display: inline-block;
+    float:left;
+    clear:both;
+    margin-top:20px;
+    width: 75px;
+    height: 25px;
+    overflow: hidden;
+    text-align: center;
+    font-size: 14px;
+    line-height: 25px;
+    vertical-align: center;
+    border: 1px solid #1a4bff;
+    background-color: #358bec;
+    color:#fff;
+    border-radius: 3px;
+}
+.btn_img:hover{
+    border: 1px solid #1a4bff;
+    background-color: #358bec;
+}
+.btn_img input{
+    position: absolute;
+    top:0;
+    left: 0;
+    opacity: 0;
+}

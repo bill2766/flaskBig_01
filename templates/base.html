@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>前景识别</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet" href="../static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+	<script src="../static/jquery/jquery-3.3.1.js"></script>
+	<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+{% for message in get_flashed_messages() %}
+    <div class="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
+    <div class="container">
+        <div class="row" name="nav">
+            <div class = "col-md-12" style="background-color:white;padding-right:0;padding-left:0">
+                <nav class="navbar navbar-default" style="margin-bottom:2px;margin-top:10px" role="navigation">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">首页</a>
+                    </div>
+                    <div>
+                        <ul class="nav navbar-nav">
+                            <li class="active">
+                                <a href="#">更多</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row" name="main">
+            <div class = "col-md-2" style="background-color:grey;height: 300px">
+                <!--
+                <div style="margin: 20px 40px">
+                    <label type="button" class="btn_img">
+                        <span>选择图片</span>
+                        <input type="file">
+                    </label>
+                    <button type="button" class="btn_img">检测</button>
+                </div>-->
+
+                <div style="margin: 20px 40px">
+                    <form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data">
+                        <label type="button" class="btn_img">
+                            <span>选择图片</span>
+                            <input type="file" name="photo">
+                        </label>
+                        <input type="submit" value="提交图片" class="btn_img" style="margin-top:15px;"/>
+                    </form>
+
+                    <button type="button" class="btn_img">检测</button>
+                </div>
+            </div>
+            <div class = "col-md-7" style="background-color:beige;height: 500px;text-align:center;object-fit: contain;">
+                 {% block img %}
+                 {% endblock %}
+            </div>
+            <div class = "col-md-3" style="background-color:#c4e3f3;height: 300px">
+                {<br>
+                    "predict label":"sugar man"<br>
+                }
+            </div>
+        </div>
+        <div class="row" name="footer">
+            <div class = "col-md-12 text-center" style="background-color:ghostwhite">
+                <small>
+                    欢迎使用
+                </small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
