@@ -1,7 +1,8 @@
+import json
 import os
 import uuid
 
-from flask import Flask, render_template, flash, redirect, url_for, request, send_from_directory, session
+from flask import Flask, render_template, flash, redirect, url_for, request, send_from_directory, session, jsonify
 from flask_ckeditor import CKEditor, upload_success, upload_fail
 from flask_dropzone import Dropzone
 from flask_wtf.csrf import validate_csrf
@@ -36,17 +37,33 @@ def random_filename(filename):
     new_filename = uuid.uuid4().hex + ext
     return new_filename
 
+# @app.route('/upload', methods=['GET', 'POST'])
+# def upload():
+#     img = request.files.get('photo')
+#     filename = random_filename(img.filename)
+#     img.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+#     session['filenames'] = [filename]
+#     return redirect(url_for('show_images'))
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     img = request.files.get('photo')
     filename = random_filename(img.filename)
     img.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-    session['filenames'] = [filename]
-    return redirect(url_for('show_images'))
+    img_url = "uploads/"+filename
+    return jsonify({'success':200,"msg":"上传成功","img_url":img_url})
+
+@app.route('/detectImg',methods=['POST'])
+def detectImg():
+    m = request.get_data()  # 获取字节流
+    s1 = str(m, encoding='utf-8')  # 转换成字符串
+    dic = json.loads(s1)  # 转换为字典
+    imgSrc = dic['imgSrc']
+    print(imgSrc)
+    return jsonify({'success':200,"msg":"上传成功","value":imgSrc})
 
 @app.route('/uploaded-images')
 def show_images():
-    return render_template('showImg.html')
+    return render_template('showImg_ex.html')
 
 @app.route('/uploads/<path:filename>')
 def get_file(filename):

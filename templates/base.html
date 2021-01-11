@@ -56,18 +56,65 @@
                     </div>
                     <div class="panel-body" style="height: 500px;">
                         <div name="imgButtons" style="text-align:center;">
-                            <form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data">
+                            <!--<form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data">-->
+                            <form method="post" enctype="multipart/form-data" id="img_form">
                                 <label type="button" class="btn_img">
                                     <span>选择图片</span>
-                                    <input type="file" name="photo">
+                                    <input type="file" name="photo" id="photo">
                                 </label>
-                                <input type="submit" value="提交图片" class="btn_img"/>
+                                <!--<input type="submit" value="提交图片" class="btn_img"/>-->
+                                <input type="button" value="提交图片" class="btn_img" onclick="ajaxImgForm()"/>
                             </form>
-                            <button type="button" class="btn_img">检测</button>
+                            <script>
+                                function ajaxImgForm(){
+                                    var imgForm= new FormData(document.getElementById("img_form"));
+                                    $.ajax({
+                                        url:"{{ url_for('upload') }}",
+                                        type:"post",
+                                        data:imgForm,
+                                        dataType: 'json',
+                                        processData:false,
+                                        contentType:false,
+                                        success:function(data){
+                                            var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
+                                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                                                "上传成功</div>");
+                                            $("#alertDiv").append(alertVar)
+                                            $("#Img").attr("src",data.img_url);
+                                        },
+                                        error:function(e){
+                                                alert(e.responseText);
+                                        }
+                                    })
+                                }
+                            </script>
+                            <button type="button" class="btn_img" onclick="detectImg()">检测</button>
+                            <script>
+                                function detectImg(){
+                                    var imgSrc = $("#Img").attr("src");
+                                    $.ajax({
+                                        url:"/detectImg",
+                                        type:"post",
+                                        data: JSON.stringify({"imgSrc":imgSrc}),
+                                        dataType: 'json',
+                                        processData:false,
+                                        contentType:false,
+                                        success:function(data){
+                                            alert(data.value);
+                                        },
+                                        error:function(e){
+                                            alert(e.responseText);
+                                        }
+                                    })
+                                }
+                            </script>
+                        </div>
+                        <div style="float:left;margin-left: 10px" id="alertDiv">
                         </div>
                         <div style="float:left;clear:both;">
-                            {% block img %}
-                            {% endblock %}
+                            {#{% block img %}#}
+                            {#{% endblock %}#}
+                            <img id="Img" src="" width="600" style="max-height: 400px">
                         </div>
                     </div>
                 </div>
