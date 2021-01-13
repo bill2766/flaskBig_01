@@ -42,11 +42,14 @@ def random_filename(filename):
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    img = request.files.get('photo')
-    filename = random_filename(img.filename)
-    img.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-    img_url = "uploads/"+filename
-    return jsonify({'success':200,"msg":"上传成功","img_url":img_url})
+    if len(str(request.files.get('photo').filename)) != 0:
+        img = request.files.get('photo')
+        filename = random_filename(img.filename)
+        img.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        img_url = "uploads/"+filename
+        return jsonify({'success':200,"msg":"上传成功","img_url":img_url})
+    else:
+        return jsonify({'success':404,"msg":"上传失败","img_url":""})
 
 @app.route('/renet50/results_user_test/<path:filename>')
 def get_result(filename):

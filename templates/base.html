@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>前景识别</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='pic.svg') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.3.7-dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
@@ -76,13 +76,21 @@
                                         processData:false,
                                         contentType:false,
                                         success:function(data){
-                                            $("#alertDiv").empty()
-                                            var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
-                                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
-                                                "上传成功</div>");
-                                            $("#alertDiv").append(alertVar)
-                                            $("#Img").attr("src",data.img_url);
-                                            $("#ImgResult").attr("src","");
+                                            if (data.success == 200){
+                                                $("#alertDiv").empty()
+                                                var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
+                                                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                                                    "上传成功</div>");
+                                                $("#alertDiv").append(alertVar)
+                                                $("#Img").attr("src",data.img_url);
+                                                $("#ImgResult").attr("src","");
+                                            }else{
+                                                $("#alertDiv").empty()
+                                                var alertVar = $("<div id=\"dangerAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-danger alert-dismissible\" role=\"alert\">" +
+                                                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                                                        "请先上传图片</div>");
+                                                $("#alertDiv").append(alertVar)
+                                            }
                                         },
                                         error:function(e){
                                                 alert(e.responseText);
@@ -93,54 +101,68 @@
                             <button type="button" class="btn_img" onclick="detectImg()">检测</button>
                             <script>
                                 function detectImg(){
-                                    var imgSrc = $("#Img").attr("src");
-                                    $.ajax({
-                                        url:"/detectImg",
-                                        type:"post",
-                                        data: JSON.stringify({"imgSrc":imgSrc}),
-                                        dataType: 'json',
-                                        processData:false,
-                                        contentType:false,
-                                        success:function(data){
-                                            $("#alertDiv").empty()
-                                            var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
+                                    if ($("#Img").attr("src") == null){
+                                        $("#alertDiv").empty()
+                                        var alertVar = $("<div id=\"dangerAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-danger alert-dismissible\" role=\"alert\">" +
                                                 "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
-                                                "检测成功</div>");
-                                            $("#alertDiv").append(alertVar);
+                                                "请先上传图片</div>");
+                                        $("#alertDiv").append(alertVar)
+                                    }else{
+                                        $("#alertDiv").empty()
+                                        var alertVar = $("<div id=\"infoAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-info alert-dismissible\" role=\"alert\">" +
+                                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                                                "请稍等</div>");
+                                        $("#alertDiv").append(alertVar)
+                                        var imgSrc = $("#Img").attr("src");
+                                        $.ajax({
+                                            url:"/detectImg",
+                                            type:"post",
+                                            data: JSON.stringify({"imgSrc":imgSrc}),
+                                            dataType: 'json',
+                                            processData:false,
+                                            contentType:false,
+                                            success:function(data){
+                                                $("#alertDiv").empty()
+                                                var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
+                                                    "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                                                    "检测成功</div>");
+                                                $("#alertDiv").append(alertVar);
 
-                                            $("#ImgResult").attr("src", data.resultImgUrl);
+                                                $("#ImgResult").attr("src", data.resultImgUrl);
 
-                                            //g,表示全部替换。
-                                            var itemsStr2 = (data.itemsNum).replace(/\'/g,"\"");
-                                            var itemsJson = JSON.parse(itemsStr2);
-                                            for (var i=0; i < itemsJson.length;i++){
-                                                $("#tableItem").append("<tr><td>"+itemsJson[i].name+"</td><td>"+itemsJson[i].num+"</td></tr>");
+                                                //g,表示全部替换。
+                                                var itemsStr2 = (data.itemsNum).replace(/\'/g,"\"");
+                                                var itemsJson = JSON.parse(itemsStr2);
+                                                for (var i=0; i < itemsJson.length;i++){
+                                                    $("#tableItem").append("<tr><td>"+itemsJson[i].name+"</td><td>"+itemsJson[i].num+"</td></tr>");
+                                                }
+
+                                                var itemsAreaStr2 = (data.itemsArea).replace(/\'/g,"\"");
+                                                var itemsAreaJson = JSON.parse(itemsAreaStr2);
+
+                                                itemChart.setOption({
+                                                    series: [{
+                                                        data:(function(){
+                                                            var arrItems = [];
+                                                            for (var i=0; i < itemsAreaJson.length;i++){
+                                                                //alert(item.name);
+                                                                arrItems.push({
+                                                                    name:itemsAreaJson[i].name,
+                                                                    value:itemsAreaJson[i].area
+                                                                });
+                                                            }
+                                                            return arrItems;
+                                                        })()
+                                                    }]
+                                                });
+                                                //itemChart.hideLoading();
+                                            },
+                                            error:function(e){
+                                                alert(e.responseText);
                                             }
+                                        })
+                                    }
 
-                                            var itemsAreaStr2 = (data.itemsArea).replace(/\'/g,"\"");
-                                            var itemsAreaJson = JSON.parse(itemsAreaStr2);
-
-                                            itemChart.setOption({
-                                                series: [{
-                                                    data:(function(){
-                                                        var arrItems = [];
-                                                        for (var i=0; i < itemsAreaJson.length;i++){
-                                                            //alert(item.name);
-                                                            arrItems.push({
-                                                                name:itemsAreaJson[i].name,
-                                                                value:itemsAreaJson[i].area
-                                                            });
-                                                        }
-                                                        return arrItems;
-                                                    })()
-                                                }]
-                                            });
-                                            //itemChart.hideLoading();
-                                        },
-                                        error:function(e){
-                                            alert(e.responseText);
-                                        }
-                                    })
                                 }
                             </script>
                         </div>
