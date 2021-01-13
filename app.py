@@ -62,7 +62,31 @@ def detectImg():
     # 调用模型进行图片处理
     result_filename = userTest(os.path.join(app.config['UPLOAD_PATH'], imgName))
     resultImgUrl = url_for('get_result',filename=result_filename)
-    return jsonify({'success':200,"msg":"上传成功","resultImgUrl":resultImgUrl})
+    #测试用
+    #resultImgUrl = ""
+    #itemsNum = str([{"name":"道路","num":1},{"name":"行人","num":2},{"name":"红绿灯","num":1}])
+    #itemsArea = str([{"name":"道路","area":120},{"name":"行人","area":50},{"name":"红绿灯","area":80}])
+
+    resultHandle = imageHandle(os.path.join(app.config['RESULT_PATH'], result_filename))
+    #resultHandle = [('vegetation', 49.31), ('road', 27.36), ('building', 15.24), ('fence', 2.0), ('sidewalk', 1.87), ('sky', 1.74), ('person', 0.79), ('terrain', 0.64), ('car', 0.37), ('traffic sign', 0.28), ('pole', 0.25), ('wall', 0.15), ('bus', 0.0)]
+    itemsNum = list()
+    itemsArea = list()
+    for result in resultHandle[:5]:
+        itemsNum.append({'name':result[0],'num':result[1]})
+        itemsArea.append({'name':result[0],'area':result[1]})
+    for i in range(5,len(resultHandle)):
+        if i==5:
+            itemsNum.append({'name': 'others', 'num': resultHandle[i][1]})
+            itemsArea.append({'name': 'others', 'area': resultHandle[i][1]})
+        else:
+            itemsNum[5]['num']+=resultHandle[i][1]
+            itemsArea[5]['area']+=resultHandle[i][1]
+        if i == len(resultHandle)-1:
+            itemsNum[5]['num'] = round(itemsNum[5]['num'],2)
+            itemsArea[5]['area'] = round(itemsArea[5]['area'], 2)
+    itemsNum = str(itemsNum)
+    itemsArea = str(itemsArea)
+    return jsonify({'success':200,"msg":"上传成功","resultImgUrl":resultImgUrl,"itemsNum":itemsNum,"itemsArea":itemsArea})
 
 @app.route('/uploaded-images')
 def show_images():

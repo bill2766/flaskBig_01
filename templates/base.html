@@ -82,6 +82,7 @@
                                                 "上传成功</div>");
                                             $("#alertDiv").append(alertVar)
                                             $("#Img").attr("src",data.img_url);
+                                            $("#ImgResult").attr("src","");
                                         },
                                         error:function(e){
                                                 alert(e.responseText);
@@ -105,8 +106,36 @@
                                             var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
                                                 "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
                                                 "检测成功</div>");
-                                            $("#alertDiv").append(alertVar)
+                                            $("#alertDiv").append(alertVar);
+
                                             $("#ImgResult").attr("src", data.resultImgUrl);
+
+                                            //g,表示全部替换。
+                                            var itemsStr2 = (data.itemsNum).replace(/\'/g,"\"");
+                                            var itemsJson = JSON.parse(itemsStr2);
+                                            for (var i=0; i < itemsJson.length;i++){
+                                                $("#tableItem").append("<tr><td>"+itemsJson[i].name+"</td><td>"+itemsJson[i].num+"</td></tr>");
+                                            }
+
+                                            var itemsAreaStr2 = (data.itemsArea).replace(/\'/g,"\"");
+                                            var itemsAreaJson = JSON.parse(itemsAreaStr2);
+
+                                            itemChart.setOption({
+                                                series: [{
+                                                    data:(function(){
+                                                        var arrItems = [];
+                                                        for (var i=0; i < itemsAreaJson.length;i++){
+                                                            //alert(item.name);
+                                                            arrItems.push({
+                                                                name:itemsAreaJson[i].name,
+                                                                value:itemsAreaJson[i].area
+                                                            });
+                                                        }
+                                                        return arrItems;
+                                                    })()
+                                                }]
+                                            });
+                                            //itemChart.hideLoading();
                                         },
                                         error:function(e){
                                             alert(e.responseText);
@@ -131,10 +160,8 @@
                     <div class = "col-md-12" style="background-color:white;">
                         <div class="panel panel-default">
                             <div class="panel-heading">物体</div>
-                            <table class="table">
-                                <th>物体记录</th><th>数量 </th>
-                                <tr><td>道路</td><td>1</td></tr>
-                                <tr><td>行人</td><td>2</td></tr>
+                            <table class="table" id="tableItem">
+                                <th>物体记录</th><th>占图百分比 </th>
                             </table>
                         </div>
                     </div>
@@ -148,16 +175,44 @@
                           <div class="panel-body">
                             <div id="echart1" style="width:250px;height: 250px;">
                                 <script type="text/javascript">
-                                    echarts.init(document.getElementById('echart1')).setOption({
-                                        series: {
-                                            type: 'pie',
-                                            data: [
-                                                {name: 'A', value: 1212},
-                                                {name: 'B', value: 2323},
-                                                {name: 'C', value: 1919}
-                                            ]
+                                    var option = {
+                                            series: {
+                                                type: 'pie',
+                                                radius:[0,'35%'],
+                                                selectedMode:"single",
+                                                data: [
+
+                                                ],
+                                                label: {
+                                                  normal: {
+                                                    formatter: "{per|{d}%}\n{a|{b}}\n{hr|}", //百分比之后换行显示文字
+                                                    rich: {
+                                                      a: {
+                                                        color: "#40E0D0",  //文字颜色
+                                                        fontSize: 10,   //文字大小
+                                                        lineHeight: 20,  //间距
+                                                        align: "center"  //文字居中
+                                                      },
+                                                      per: {
+                                                        color: "#FF6A6A",  //百分比文字颜色
+                                                        align: "center",
+                                                        fontSize: 12
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                labelLine: {
+                                                  normal: {
+                                                    lineStyle: {
+                                                      color: "#e2e8ed"  //指向线颜色
+                                                    },
+                                                    smooth: 0.2,  //线的拐弯程度
+                                                  }
+                                                },
+                                            }
                                         }
-                                    });
+                                    var itemChart = echarts.init(document.getElementById('echart1'));
+                                    itemChart.setOption(option);
                                 </script>
                             </div>
                           </div>
