@@ -49,54 +49,30 @@
                   </ul>
                 </nav>
             </div>
-            <div class = "col-md-7" style="background-color:white; width: 80% ">
+            <div class = "col-md-10" style="background-color:white; ">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         历史记录
                     </div>
-                    <div class="panel-body" id="lcq" style="width: 80%; height: 500px;">
-
+                    <div class="panel-body" id="lcq">
                         {% block content %}
                         {% if session.filenames %}
                         {% for filename in session.filenames %}
-                        <a href="{{ url_for('get_picture', filename=filename) }}" target="_blank">
-                            <img src="{{ url_for('get_picture', filename=filename) }}" width="50%">
+                        <a href="{{ url_for('get_picture', filename=filename) }}" target="_blank" style="float:left;margin-bottom:20px;margin-right: 20px">
+                            <img src="{{ url_for('get_picture', filename=filename) }}" width="400px" height="250px">
                         </a>
                         {% endfor %}
                         {% endif %}
                         {% endblock %}
-{#                        <input type="file" id="selectFiles" value="../uploads" onchange="dealSelectFiles()" multiple webkitdirectory>#}
-{#                        <canvas id="myCanvas" width=1440 height=900></canvas>#}
-{#                        <script type="text/javascript">#}
-{#                            var imgPosX = 0;#}
-{#                            var imgWidth = 256;#}
-{#                            function dealSelectFiles(){#}
-{#                                /// get select files.#}
-{#                                var selectFiles = document.getElementById("selectFiles").files;#}
-{#                                #}
-{#                                for(var file of selectFiles){#}
-{#                                    console.log(file.webkitRelativePath);#}
-{#                                    /// read file content.#}
-{#                                    var reader = new FileReader();#}
-{#                                    reader.readAsDataURL(file);#}
-{#                                    reader.onloadend = function(){#}
-{#                                        /// deal data.#}
-{#                                        var img = new Image();#}
-{#                                        /// after loader, result storage the file content result.#}
-{#                                        img.src = this.result;#}
-{##}
-{#                                        img.onload = function(){#}
-{#                                            var myCanvas = document.getElementById("myCanvas");#}
-{#                                            var cxt = myCanvas.getContext('2d');#}
-{#                                            cxt.drawImage(img, imgPosX, 0,256,256);#}
-{#                                            imgPosX += imgWidth;#}
-{#                                        }#}
-{#                                    }#}
-{#                                }#}
-{#                            }#}
-{#                        </script>#}
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row" name="footer">
+            <div class = "col-md-12 text-center" style="background-color:ghostwhite">
+                <small>
+                    欢迎使用
+                </small>
             </div>
         </div>
     </div>

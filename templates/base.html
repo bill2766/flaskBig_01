@@ -54,7 +54,7 @@
                     <div class="panel-heading">
                         识别图片
                     </div>
-                    <div class="panel-body" style="height: 500px;">
+                    <div class="panel-body">
                         <div name="imgButtons" style="text-align:center;">
                             <!--<form method="post" action="http://localhost:5000/upload" enctype="multipart/form-data">-->
                             <form method="post" enctype="multipart/form-data" id="img_form">
@@ -106,7 +106,7 @@
                                                 "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
                                                 "检测成功</div>");
                                             $("#alertDiv").append(alertVar)
-                                            $("#Img").attr("src", data.resultImgUrl);
+                                            $("#ImgResult").attr("src", data.resultImgUrl);
                                         },
                                         error:function(e){
                                             alert(e.responseText);
@@ -120,7 +120,8 @@
                         <div style="float:left;clear:both;">
                             {#{% block img %}#}
                             {#{% endblock %}#}
-                            <img id="Img" src="" style="max-width:600px;max-height: 600px">
+                            <img id="Img" src="" style="float:left;max-width:600px;min-height: 400px;margin-bottom: 20px">
+                            <img id="ImgResult" src="" style="float:left;max-width:600px;min-height: 400px">
                         </div>
                     </div>
                 </div>
