@@ -10,6 +10,7 @@ from wtforms import ValidationError
 from caller import userTest
 
 from forms import UploadForm
+from imageHandle import imageHandle
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'secret string')
