@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>历史记录</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.3.7-dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='jquery/jquery-3.3.1.js') }}"></script>
+    <script src="{{url_for('static', filename='bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{url_for('static', filename='echarts/dist/echarts.min.js') }}"></script>
+</head>
+<body>
+{% for message in get_flashed_messages() %}
+    <div class="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
+    <div class="container" style="width: 80%">
+        <div class="row" name="nav">
+            <div class = "col-md-12" style="background-color:white;">
+                <nav class="navbar navbar-default" style="margin-bottom:5px;margin-top:10px" role="navigation">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">首页</a>
+                    </div>
+                    <div>
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="#">更多</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row" name="main">
+            <div class = "col-md-2" style="background-color:white;height: 300px">
+
+                <nav class="navbar navbar-default" id="sidebar-wrapper" role="navigation">
+                  <ul class="nav sidebar-nav">
+                    <li class="sidebar-brand">
+                    <li>
+                      <a href="/"><span class="glyphicon glyphicon-upload"></span>识别图片</a>
+                    </li>
+                    <li><a href="http://127.0.0.1:5000/history-filename"><span class="glyphicon glyphicon-repeat"></span>历史记录 </a></li>
+                  </ul>
+                </nav>
+            </div>
+            <div class = "col-md-7" style="background-color:white; width: 80% ">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        历史记录
+                    </div>
+                    <div class="panel-body" id="lcq" style="width: 80%; height: 500px;">
+
+                        {% block content %}
+                        {% if session.filenames %}
+                        {% for filename in session.filenames %}
+                        <a href="{{ url_for('get_picture', filename=filename) }}" target="_blank">
+                            <img src="{{ url_for('get_picture', filename=filename) }}" width="50%">
+                        </a>
+                        {% endfor %}
+                        {% endif %}
+                        {% endblock %}
+{#                        <input type="file" id="selectFiles" value="../uploads" onchange="dealSelectFiles()" multiple webkitdirectory>#}
+{#                        <canvas id="myCanvas" width=1440 height=900></canvas>#}
+{#                        <script type="text/javascript">#}
+{#                            var imgPosX = 0;#}
+{#                            var imgWidth = 256;#}
+{#                            function dealSelectFiles(){#}
+{#                                /// get select files.#}
+{#                                var selectFiles = document.getElementById("selectFiles").files;#}
+{#                                #}
+{#                                for(var file of selectFiles){#}
+{#                                    console.log(file.webkitRelativePath);#}
+{#                                    /// read file content.#}
+{#                                    var reader = new FileReader();#}
+{#                                    reader.readAsDataURL(file);#}
+{#                                    reader.onloadend = function(){#}
+{#                                        /// deal data.#}
+{#                                        var img = new Image();#}
+{#                                        /// after loader, result storage the file content result.#}
+{#                                        img.src = this.result;#}
+{##}
+{#                                        img.onload = function(){#}
+{#                                            var myCanvas = document.getElementById("myCanvas");#}
+{#                                            var cxt = myCanvas.getContext('2d');#}
+{#                                            cxt.drawImage(img, imgPosX, 0,256,256);#}
+{#                                            imgPosX += imgWidth;#}
+{#                                        }#}
+{#                                    }#}
+{#                                }#}
+{#                            }#}
+{#                        </script>#}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

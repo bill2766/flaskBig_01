@@ -43,9 +43,9 @@
                   <ul class="nav sidebar-nav">
                     <li class="sidebar-brand">
                     <li>
-                      <a href="#"><span class="glyphicon glyphicon-upload"></span>识别图片</a>
+                      <a href="http://127.0.0.1:5000"><span class="glyphicon glyphicon-upload"></span>识别图片</a>
                     </li>
-                    <li><a href="#"><span class="glyphicon glyphicon-repeat"></span>历史记录 </a></li>
+                    <li><a href="http://127.0.0.1:5000/history-filename"><span class="glyphicon glyphicon-repeat"></span>历史记录 </a></li>
                   </ul>
                 </nav>
             </div>
@@ -76,6 +76,7 @@
                                         processData:false,
                                         contentType:false,
                                         success:function(data){
+                                            $("#alertDiv").empty()
                                             var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
                                                 "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
                                                 "上传成功</div>");
@@ -100,7 +101,12 @@
                                         processData:false,
                                         contentType:false,
                                         success:function(data){
-                                            alert(data.value);
+                                            $("#alertDiv").empty()
+                                            var alertVar = $("<div id=\"successAlert\" style=\"margin-bottom: 0px\" class=\"alert alert-success alert-dismissible\" role=\"alert\">" +
+                                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>" +
+                                                "检测成功</div>");
+                                            $("#alertDiv").append(alertVar)
+                                            $("#Img").attr("src", data.resultImgUrl);
                                         },
                                         error:function(e){
                                             alert(e.responseText);
@@ -114,7 +120,7 @@
                         <div style="float:left;clear:both;">
                             {#{% block img %}#}
                             {#{% endblock %}#}
-                            <img id="Img" src="" width="600" style="max-height: 400px">
+                            <img id="Img" src="" style="max-width:600px;max-height: 600px">
                         </div>
                     </div>
                 </div>
