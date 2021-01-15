@@ -3,13 +3,9 @@ import os
 import uuid
 
 from flask import Flask, render_template, flash, redirect, url_for, request, send_from_directory, session, jsonify
-from flask_ckeditor import CKEditor, upload_success, upload_fail
 from flask_dropzone import Dropzone
-from flask_wtf.csrf import validate_csrf
-from wtforms import ValidationError
 from caller import userTest
 
-from forms import UploadForm
 from imageHandle import imageHandle
 
 app = Flask(__name__)
@@ -30,16 +26,18 @@ app.config['DROPZONE_MAX_FILE_SIZE'] = 3
 app.config['DROPZONE_MAX_FILES'] = 30
 dropzone = Dropzone(app)
 
-
+#主页面
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('base.html')
 
+#随机图片名字
 def random_filename(filename):
     ext = os.path.splitext(filename)[1]
     new_filename = uuid.uuid4().hex + ext
     return new_filename
 
+#接受前端的图片，并返回服务器保存的图片路径用于显示
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if len(str(request.files.get('photo').filename)) != 0:
@@ -51,10 +49,12 @@ def upload():
     else:
         return jsonify({'success':404,"msg":"上传失败","img_url":""})
 
+#获得结果图片路径
 @app.route('/renet50/results_user_test/<path:filename>')
 def get_result(filename):
     return send_from_directory(app.config['RESULT_PATH'], filename)
 
+#预测图片
 @app.route('/detectImg',methods=['POST'])
 def detectImg():
     m = request.get_data()  # 获取字节流
@@ -71,7 +71,11 @@ def detectImg():
     #itemsArea = str([{"name":"道路","area":120},{"name":"行人","area":50},{"name":"红绿灯","area":80}])
 
     resultHandle = imageHandle(os.path.join(app.config['RESULT_PATH'], result_filename))
+    #测试用
     #resultHandle = [('vegetation', 49.31), ('road', 27.36), ('building', 15.24), ('fence', 2.0), ('sidewalk', 1.87), ('sky', 1.74), ('person', 0.79), ('terrain', 0.64), ('car', 0.37), ('traffic sign', 0.28), ('pole', 0.25), ('wall', 0.15), ('bus', 0.0)]
+
+    #将数据转换为JSON格式，并且最大的5个之后归类为其他
+    #这两个分别用于表格和饼图展示
     itemsNum = list()
     itemsArea = list()
     for result in resultHandle[:5]:
@@ -91,24 +95,17 @@ def detectImg():
     itemsArea = str(itemsArea)
     return jsonify({'success':200,"msg":"上传成功","resultImgUrl":resultImgUrl,"itemsNum":itemsNum,"itemsArea":itemsArea})
 
-@app.route('/uploaded-images')
-def show_images():
-    return render_template('showImg_ex.html')
-
-@app.route('/uploads/<path:filename>')
-def get_file(filename):
-    return send_from_directory(app.config['UPLOAD_PATH'], filename)
-
+#跳转至历史记录页面
 @app.route('/test')
 def show_pictures():
     return render_template('history.html')
 
-
+#用于历史记录页面获得文件夹的图片
 @app.route('/uploads/<path:filename>')
 def get_picture(filename):
     return send_from_directory(app.config['UPLOAD_PATH'], filename)
 
-
+#相应查看历史记录图片按钮
 @app.route('/history-filename', methods=['GET','POST'])
 def history_filename():
     dir = "uploads"
